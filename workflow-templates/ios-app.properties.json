@@ -1,7 +1,7 @@
 {
     "name": "iOS App",
     "description": "Build a native iOS app and deploy using App Center.",
-    "iconName": "example-icon",
+    "iconName": "apple-black",
     "categories": [
         "iOS", "Swift", "Objective-C", "Mobile"
     ],
