@@ -1,0 +1,68 @@
+name: Build and Deploy App
+
+on:
+  push:
+    branches: [ $default-branch ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache Cocoapods
+        uses: actions/cache@v2
+        id: cachepods
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Install Dependencies
+        if: steps.cachepods.outputs.cache-hit != 'true'
+        run: pod install
+
+      - name: Setup Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1.1
+        with:
+          xcode-version: latest-stable
+      
+      - name: Build IPA
+        uses: yukiarrr/ios-build-action@v1.2.0
+        with:
+          project-path: $project-path
+          p12-base64: ${{ secrets.P12_BASE64 }}
+          mobileprovision-base64: ${{ secrets.MOBILEPROVISION_BASE64 }}
+          code-signing-identity: iPhone Distribution
+          team-id: ${{ secrets.TEAM_ID }}
+          export-method: ad-hoc
+          scheme: $scheme
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v2
+        with:
+          name: app
+          path: $app.ipa
+          
+  distribute:
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Download IPA
+        uses: actions/download-artifact@v2
+        with:
+          name: app
+    
+      - name: App Center Distribute
+        uses: wzieba/AppCenter-Github-Action@v1.3.1
+        with:
+          appName: $app-center-path
+          token: ${{ secrets.APP_CENTER_UPLOAD_TOKEN }}
+          group: Collaborators
+          file: $app.ipa
+          notifyTesters: true
+          debug: false
