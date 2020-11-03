@@ -1,0 +1,13 @@
+{
+    "name": "iOS App",
+    "description": "Build a native iOS app and deploy using App Center.",
+    "iconName": "example-icon",
+    "categories": [
+        "iOS", "Swift", "Objective-C", "Mobile"
+    ],
+    "filePatterns": [
+        "^Podfile",
+        ".*\\.xcodeproj$",
+        ".*\\.xcworkspace$"
+    ]
+}
