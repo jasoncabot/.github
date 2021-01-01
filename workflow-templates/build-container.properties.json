@@ -1,0 +1,11 @@
+{
+    "name": "Build & Push Container",
+    "description": "Build and push a set of containers",
+    "iconName": "container-registry",
+    "categories": [
+        "Dockerfile"
+    ],
+    "filePatterns": [
+        "^Dockerfile"
+    ]
+}
